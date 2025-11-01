@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boo Cosmetics | Cute. Clean. Conscious.</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Configure Tailwind to use Inter font and new pastel colors (Pink and Mint only) --><script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              // UPDATED: Changed font to a cute, smooth one
+              display: ['"Fredoka One"', 'cursive'], // Cute, rounded, smooth
+            },
+            colors: {
+              // Pink and Mint Palette
+              'boo-pink': '#FFC6D9', // Mid Pink/Ghost Body Color
+              'boo-purple': '#F0BBF0', // Soft Lavender Pink (used as an accent now)
+              'boo-mint': '#B7F0ED', // Icy Mint Accent
+              'boo-dark': '#3C3058', // Softer Deep Contrast (Violet/Plum)
+              'boo-light': '#F0F8FF', // Very Light Background (near white)
+              'boo-black': '#000000', // Added for the Boo text
+            }
+          }
+        }
+      }
+    </script>
+    <!-- Google Font: Inter --><link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- UPDATED: Changed font for 'Boo' text --><link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        /* Set entire background to a soft pastel wash */
+        body {
+            background-color: #F0F8FF;
+            scroll-behavior: smooth;
+        }
+
+        /* --- 2D Dynamic Background --- */
+        #dynamic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            /* UPDATED: Increased container opacity */
+            opacity: 1; 
+        }
+
+        @keyframes floatPlay {
+            /* UPDATED: Increased keyframe opacities for better visibility */
+            0% { transform: translate(0, 0) scale(1); opacity: 1; } /* More opaque */
+            33% { transform: translate(20vw, 15vh) scale(1.1); opacity: 0.8; }
+            66% { transform: translate(-10vw, 30vh) scale(0.9); opacity: 1; } /* More opaque */
+            100% { transform: translate(0, 0) scale(1); opacity: 1; } /* More opaque */
+        }
+
+        .floating-shape {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            animation: floatPlay 20s infinite ease-in-out alternate;
+            /* UPDATED: Reduced blur even further to make shapes more defined */
+            filter: blur(20px); 
+        }
+
+        /* Define specific shapes/ghosts */
+        #shape-1 {
+            background-color: #FFC6D9; /* boo-pink */
+            top: 10%;
+            left: 5%;
+            animation-duration: 25s;
+        }
+
+        #shape-2 {
+            background-color: #B7F0ED; /* boo-mint */
+            bottom: 20%;
+            right: 10%;
+            animation-duration: 30s;
+        }
+        
+        #shape-3 {
+            background-color: #F0BBF0; /* boo-purple accent */
+            top: 50%;
+            left: 40%;
+            width: 100px;
+            height: 100px;
+            animation-duration: 18s;
+            animation-delay: 5s;
+        }
+        
+        /* Style for scroll-based content animation effect */
+        .animated-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .animated-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Header Ghost Animation Styles --- */
+        @keyframes ghostFloat {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-7px) rotate(2deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        .ghost-float {
+            animation: ghostFloat 4s ease-in-out infinite;
+        }
+
+        /* Style for selected quiz option */
+        .quiz-option.selected {
+            /* Using the new color variables */
+            background-color: var(--tw-boo-mint) !important;
+            border-color: var(--tw-boo-dark) !important;
+            color: var(--tw-boo-dark) !important;
+            transform: scale(1.02);
+        }
+        /* Fix for Tailwind colors in CSS (runtime variable mapping for custom CSS) */
+        :root {
+            --tw-boo-mint: #B7F0ED; /* Icy Mint */
+            --tw-boo-dark: #3C3058; /* Softer Deep Contrast */
+        }
+    </style>
+</head>
+<body class="font-sans text-boo-dark antialiased">
+    <!-- NEW: 2D CSS Dynamic Background --><div id="dynamic-bg" aria-hidden="true">
+        <div id="shape-1" class="floating-shape"></div>
+        <div id="shape-2" class="floating-shape"></div>
+        <div id="shape-3" class="floating-shape"></div>
+    </div>
+
+    <!-- Navigation Header (Minimalist: Logo Only) - UPDATED: Gradient BACKGROUND --><header class="sticky top-0 z-50 bg-gradient-to-r from-boo-pink/60 to-boo-mint/60 backdrop-blur-md shadow-lg rounded-b-xl border-b border-white/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center items-center py-4">
+            <!-- Logo/Brand (Cute Ghost SVG with continuous float animation and interactive eyes) --><!-- UPDATED: Text color to black, font to custom 'display' font --><a href="#hero" class="text-3xl font-display text-boo-black tracking-tight flex items-center">
+                <!-- SVG now includes pupil IDs for JS manipulation --><svg id="header-ghost" xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 mr-2 ghost-float" viewBox="0 0 24 24" fill="currentColor">
+                    <!-- Ghost Body - boo-pink (Kept pink, contrasts well with header) --><path fill="#FFC6D9" d="M12 2C6.477 2 2 6.477 2 12c0 3.321 1.637 6.3 4.3 8.165L6.6 21H17.4l.3-.835C20.363 18.3 22 15.321 22 12c0-5.523-4.477-10-10-10z"/>
+                    <!-- Pupils - boo-dark --><circle id="left-pupil" cx="9" cy="11" r="1" fill="#3C3058"/>
+                    <circle id="right-pupil" cx="15" cy="11" r="1" fill="#3C3058"/>
+                </svg>
+                BOO
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <!-- 1. HERO SECTION --><section id="hero" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24 md:py-32 flex flex-col md:flex-row items-center justify-between gap-12">
+            <div class="md:w-1/2 text-center md:text-left">
+                <span class="inline-block px-4 py-1 text-sm font-semibold text-boo-dark bg-boo-mint/80 rounded-full mb-4 shadow-md">
+                    New-Age Beauty. It's bussin', no cap.
+                </span>
+                <!-- UPDATED: Adjusted text sizes for better mobile scaling --><h1 class="text-5xl sm:text-7xl lg:text-8xl font-black leading-tight text-boo-dark">
+                    <!-- UPDATED: Changed "Slaying" to dark color -->The Future is <span class="text-boo-dark">Slaying</span>, Period.
+                </h1>
+                <p class="mt-6 text-xl text-gray-700 max-w-lg mx-auto md:mx-0">
+                    Boo Cosmetics is serving main character energy with playful vibes and transparent, science-backed ingredients. No cap, integrity is our glow-up.
+                </p>
+                <div class="mt-10 flex justify-center md:justify-start space-x-4">
+                    <a href="#vibecheck" class="px-8 py-4 bg-boo-dark text-white font-bold text-lg rounded-full shadow-xl hover:bg-boo-pink hover:text-boo-dark transition duration-300 transform hover:scale-105">
+                        Vibe Check Now
+                    </a>
+                    <a href="#products" class="px-8 py-4 bg-transparent border-2 border-boo-dark text-boo-dark font-bold text-lg rounded-full hover:bg-boo-dark/10 transition duration-300 transform hover:scale-105">
+                        Shop The Drop
+                    </a>
+                </div>
+            </div>
+
+            <!-- Placeholder for visual balance --><!-- UPDATED: Removed placeholder text --><div class="md:w-1/2 h-80 md:h-96 relative flex items-center justify-center">
+            </div>
+        </section>
+
+        <!-- 2. VIBE CHECK SURVEY (New Personalized Quiz) - GLASS MORPHISM --><section id="vibecheck" class="py-20 animated-section">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white/40 backdrop-blur-md rounded-3xl shadow-2xl border border-white/70 p-8 md:p-12 text-center">
+                    <h2 class="text-4xl font-extrabold text-boo-dark mb-4">
+                        <span class="text-boo-mint">✨</span> Vibe Check <span class="text-boo-mint">✨</span>
+                    </h2>
+                    <p class="text-lg text-gray-700 mb-8">
+                        Match your energy to your next must-have. Only takes a sec, bet!
+                    </p>
+
+                    <!-- Quiz Content Container --><div id="quiz-container">
+                        <!-- Content rendered by JavaScript --></div>
+
+                    <div id="quiz-navigation" class="mt-8 flex justify-center space-x-4">
+                        <button id="prev-button" class="hidden px-6 py-3 bg-boo-dark text-white font-semibold rounded-full hover:bg-boo-pink/80 transition duration-200">
+                            Prev Vibe
+                        </button>
+                        <button id="next-button" class="hidden px-6 py-3 bg-boo-pink/80 text-boo-dark font-semibold rounded-full shadow-md hover:bg-boo-pink transition duration-200">
+                            Next Vibe
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 3. INGREDIENT & INTEGRITY PROMISE (Page 3) - GLASS MORPHISM CARDS --><section id="mission" class="py-20 bg-boo-light animated-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- UPDATED: Adjusted text sizes for better mobile scaling --><h2 class="text-4xl sm:text-5xl font-extrabold text-center mb-16 text-boo-dark">
+                    The Boo Promise: Quality & Integrity
+                </h2>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    
+                    <!-- Card 1: Aesthetic Joy (Glassmorphism + New Emoji) --><div class="p-8 bg-white/40 backdrop-blur-md rounded-3xl shadow-xl border border-white/70 text-center transition duration-500 hover:scale-[1.03]">
+                        <div class="text-5xl mb-4 text-boo-pink">💫</div>
+                        <h3 class="text-2xl font-bold mb-3 text-boo-dark">Aesthetic Joy</h3>
+                        <p class="text-gray-700">
+                            Low-key, beauty should be fun! Our packaging gives pure main character energy, sparking joy every time you pick it up. Iykyk.
+                        </p>
+                    </div>
+
+                    <!-- Card 2: Molecular Quality (Glassmorphism + New Emoji) --><div class="p-8 bg-white/40 backdrop-blur-md rounded-3xl shadow-xl border border-white/70 text-center transition duration-500 hover:scale-[1.03]">
+                        <div class="text-5xl mb-4 text-boo-pink">🧬</div>
+                        <h3 class="text-2xl font-bold mb-3 text-boo-dark">Molecular Quality</h3>
+                        <p class="text-gray-700">
+                            We only use clinically effective, high-key quality ingredients. Period. No fake stuff, no shady chemicals—just pure, potent goodness that slays for your skin.
+                        </p>
+                    </div>
+
+                    <!-- Card 3: Planet-First Ethics (Glassmorphism + New Emoji) --><div class="p-8 bg-white/40 backdrop-blur-md rounded-3xl shadow-xl border border-white/70 text-center transition duration-500 hover:scale-[1.03]">
+                        <div class="text-5xl mb-4 text-boo-pink">🌐</div>
+                        <h3 class="text-2xl font-bold mb-3 text-boo-dark">Planet-First Ethics</h3>
+                        <p class="text-gray-700">
+                            Cruelty-free, vegan, and sustainability is our rizz. Our integrity isn't a trend; it's the foundation of every choice we make, for real.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. PRODUCT SHOWCASE (Page 4) - SUBTLE GLASS MORPHISM ON CARDS --><section id="products" class="py-20 animated-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- UPDATED: Adjusted text sizes for better mobile scaling --><h2 class="text-4xl sm:text-5xl font-extrabold text-center mb-6 text-boo-dark">
+                    The Drop: Our Star Lineup
+                </h2>
+                <p class="text-xl text-gray-700 text-center mb-12">
+                    Minimal products, maximum impact. Time to glow up.
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    
+                    <!-- Product Cards - Updated Colors --><!-- Product 1: Soft Focus Cream --><div id="product-Soft Focus Cream" class="bg-white/50 backdrop-blur-sm p-6 rounded-3xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition duration-300 border border-white/50">
+                        <div class="w-full h-48 bg-boo-pink/80 rounded-2xl mb-4 flex items-center justify-center">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-boo-dark" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17 12H7m10 0l-4 4m4-4l-4-4"/>
+                                <circle cx="12" cy="12" r="10" stroke="#3C3058" stroke-width="2" fill="none"/>
+                             </svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-boo-dark">Soft Focus Cream</h4>
+                        <p class="text-gray-600 mt-1 mb-3">Cloud-light hydration serum.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-extrabold text-boo-dark">$45.00</span>
+                            <button class="bg-boo-dark text-white px-4 py-2 rounded-full text-sm hover:bg-boo-mint/80 hover:text-boo-dark transition duration-300 shadow-md">Add to Bag</button>
+                        </div>
+                    </div>
+
+                    <!-- Product 2: Pixel Dust Setting Spray --><div id="product-Pixel Dust Setting Spray" class="bg-white/50 backdrop-blur-sm p-6 rounded-3xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition duration-300 border border-white/50">
+                        <div class="w-full h-48 bg-boo-purple/80 rounded-2xl mb-4 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-boo-dark" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2a10 10 0 00-9.8 8.4A1 1 0 002 11v1a1 1 0 001 1h.2A10 10 0 0012 22a10 10 0 009.8-8.4A1 1 0 0022 13v-1a1 1 0 00-1-1h-.2A10 10 0 0012 2zm0 18a8 8 0 01-8-8 8 8 0 018-8 8 8 0 018 8 8 8 0 01-8 8z"/>
+                             </svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-boo-dark">Pixel Dust Setting Spray</h4>
+                        <p class="text-gray-600 mt-1 mb-3">Blurring finish, all-day hold.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-extrabold text-boo-dark">$32.00</span>
+                            <button class="bg-boo-dark text-white px-4 py-2 rounded-full text-sm hover:bg-boo-mint/80 hover:text-boo-dark transition duration-300 shadow-md">Add to Bag</button>
+                        </div>
+                    </div>
+
+                    <!-- Product 3: Hyper-Cleanse Oil --><div id="product-Hyper-Cleanse Oil" class="bg-white/50 backdrop-blur-sm p-6 rounded-3xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition duration-300 border border-white/50">
+                        <div class="w-full h-48 bg-boo-mint/80 rounded-2xl mb-4 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-boo-dark" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                                <path d="M12 7h1.5a.5.5 0 01.5.5v2.5h2a.5.5 0 01.5.5v3a.5.5 0 01-.5.5h-2v2.5a.5.5 0 01-.5.5H12a.5.5 0 01-.5-.5v-2.5h-2a.5.5 0 01-.5-.5v-3a.5.5 0 01.5-.5h2V7.5a.5.5 0 01.5-.5z" fill="#3C3058"/>
+                             </svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-boo-dark">Hyper-Cleanse Oil</h4>
+                        <p class="text-gray-600 mt-1 mb-3">Melts makeup without stripping.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-extrabold text-boo-dark">$28.00</span>
+                            <button class="bg-boo-dark text-white px-4 py-2 rounded-full text-sm hover:bg-boo-mint/80 hover:text-boo-dark transition duration-300 shadow-md">Add to Bag</button>
+                        </div>
+                    </div>
+
+                    <!-- Product 4: Glow Filter Drops --><div id="product-Glow Filter Drops" class="bg-white/50 backdrop-blur-sm p-6 rounded-3xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition duration-300 border border-white/50">
+                        <div class="w-full h-48 bg-boo-pink/50 rounded-2xl mb-4 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-boo-dark" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M4 19h16V5H4v14zm8-12h4v2h-4V7zm0 4h4v2h-4v-2zM8 7H4v2h4V7zm0 4H4v2h4v-2zm-4 4h16v2H4v-2z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-boo-dark">Glow Filter Drops</h4>
+                        <p class="text-gray-600 mt-1 mb-3">Buildable, prismatic luminosity.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-extrabold text-boo-dark">$39.00</span>
+                            <button class="bg-boo-dark text-white px-4 py-2 rounded-full text-sm hover:bg-boo-mint/80 hover:text-boo-dark transition duration-300 shadow-md">Add to Bag</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. CTA Banner (Shop Now) (Page 5) - GLASS MORPHISM --><section id="shop" class="py-20 bg-boo-purple/70 animated-section backdrop-blur-sm rounded-3xl mx-4 my-12 shadow-xl border border-white/70">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <!-- UPDATED: Adjusted text sizes for better mobile scaling --><h2 class="text-4xl sm:text-5xl font-extrabold text-boo-dark mb-4">
+                    Vibe Check: Ready to level up?
+                </h2>
+                <p class="text-xl text-boo-dark font-medium mb-8">
+                    Start your journey with products that are kind to you and the planet. Bet!
+                </p>
+                <a href="#products" class="inline-block px-10 py-5 bg-boo-dark text-white font-black text-xl rounded-full shadow-2xl shadow-boo-dark/50 hover:bg-boo-pink/80 hover:text-boo-dark transition duration-300 transform hover:scale-105">
+                    Shop The Full Range
+                </a>
+            </div>
+        </section>
+        
+        <!-- 6. INGREDIENT SPOTLIGHT (Page 6) --><section id="ingredients" class="py-20 animated-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-12">
+                
+                <div class="md:w-1/2">
+                    <h2 class="text-4xl font-extrabold text-boo-dark mb-4">
+                        The Tea: Ingredient Transparency
+                    </h2>
+                    <p class="text-gray-600 text-lg mb-6">
+                        We don't hide behind the cap. Our ingredients are sourced with integrity, validated by science, and listed clearly for you to review. We're proud of what's inside.
+                    </p>
+                    <ul class="space-y-4 text-lg">
+                        <!-- Updated Emojis in list --><li class="flex items-center text-boo-dark">
+                            <span class="text-boo-pink mr-3 text-2xl">✨</span> 
+                            Ethical Sourcing: Traceable origins, period.
+                        </li>
+                        <li class="flex items-center text-boo-dark">
+                            <span class="text-boo-pink mr-3 text-2xl">✨</span> 
+                            Formulated Clean: No parabens, sulfates, or mineral oils—it's giving clean.
+                        </li>
+                        <li class="flex items-center text-boo-dark">
+                            <span class="text-boo-pink mr-3 text-2xl">✨</span> 
+                            Vegan & Cruelty-Free: Tested on friends, not animals. Gotta keep the vibes right.
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Spotlight Box - GLASS MORPHISM --><div class="md:w-1/2 w-full h-80 bg-white/40 backdrop-blur-md rounded-3xl p-6 shadow-inner border border-white/70">
+                    <h3 class="text-xl font-bold text-boo-dark mb-3">Spotlight Ingredient: Nano-Ceramides</h3>
+                    <p class="text-sm text-gray-500 italic mb-4">Soft Focus Cream (Primary Active)</p>
+                    <div class="bg-boo-mint/30 p-4 rounded-xl text-sm leading-relaxed">
+                        <p class="text-gray-700">
+                            Our ceramides are processed at a nanoscale for enhanced bioavailability. This means they penetrate deeper into the skin barrier to lock in moisture and protect against environmental stress. It's low-key giving snatched and that smooth, futuristic glow.
+                        </p>
+                        <p class="mt-3 text-boo-dark font-semibold">#ScienceMeetsCute #NextGenHydration</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer - MINT BACKGROUND --><footer class="bg-boo-mint text-boo-dark py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="text-3xl font-extrabold mb-4">BOO COSMETICS</div>
+            <!-- UPDATED: New tagline --><p class="text-sm text-boo-dark/70">&copy; 2025 Boo Cosmetics. All rights reserved. | Cute. Clean. Conscious.</p>
+            
+            <div class="mt-6 flex justify-center space-x-6 text-boo-dark/70 text-sm">
+                <a href="#" class="hover:text-boo-dark transition duration-200">Privacy Policy</a>
+                <a href="#" class="hover:text-boo-dark transition duration-200">Terms of Service</a>
+                <a href="#" class="hover:text-boo-dark transition duration-200">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts for Quiz, Header Animation, and Scroll Animation --><script>
+        // --- QUIZ LOGIC (Unchanged) ---
+        const quizContainer = document.getElementById('quiz-container');
+        const nextButton = document.getElementById('next-button');
+        const prevButton = document.getElementById('prev-button');
+        
+        let currentQuestionIndex = 0;
+        let quizAnswers = {};
+
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "What's your skin's current vibe?",
+                options: [
+                    { text: "It's giving dry/thirsty. Need hydration ASAP.", score: 1 },
+                    { text: "Kind of oily, needs to be snatched and matte.", score: 2 },
+                    { text: "Feeling clogged, needs a total reset/cleanse.", score: 3 },
+                    { text: "I'm already glowing, just need to level up the drip.", score: 4 },
+                ]
+            },
+            {
+                id: 2,
+                question: "What aesthetic are you chasing today?",
+                options: [
+                    { text: "Soft Focus / Dewy, but subtle.", score: 1 },
+                    { text: "Blurred / Filtered, no shine.", score: 2 },
+                    { text: "Clean Canvas / Prepped for Foundation.", score: 3 },
+                    { text: "Maximum Radiance / Prismatic Glow.", score: 4 },
+                ]
+            },
+            {
+                id: 3,
+                question: "How much time are you giving your routine?",
+                options: [
+                    { text: "Quick 5-minute glow-up.", score: 1 },
+                    { text: "Taking my time, 10+ minutes.", score: 2 },
+                ]
+            }
+        ];
+
+        function getRecommendation(score) {
+            if (score <= 4) return "Soft Focus Cream";
+            if (score <= 6) return "Pixel Dust Setting Spray";
+            if (score <= 8) return "Hyper-Cleanse Oil";
+            return "Glow Filter Drops";
+        }
+
+        function renderQuestion(index) {
+            const questionData = quizQuestions[index];
+            if (!questionData) return;
+
+            const html = `
+                <p class="text-xl font-bold mb-6 text-boo-dark">${questionData.question}</p>
+                <div class="space-y-4 max-w-lg mx-auto">
+                    ${questionData.options.map((option, optionIndex) => `
+                        <button 
+                            data-score="${option.score}"
+                            data-index="${optionIndex}"
+                            class="quiz-option w-full py-3 px-4 text-left border-2 border-boo-dark/30 rounded-xl bg-white/70 hover:bg-white/90 transition duration-150 shadow-sm"
+                            onclick="selectOption(${index}, ${option.score}, this)"
+                        >
+                            ${option.text}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+            quizContainer.innerHTML = html;
+            
+            const selectedScore = quizAnswers[index];
+            if (selectedScore !== undefined) {
+                const buttons = quizContainer.querySelectorAll('.quiz-option');
+                buttons.forEach(button => {
+                    if (parseInt(button.dataset.score) === selectedScore) {
+                        button.classList.add('selected');
+                    }
+                });
+            }
+
+            updateNavigation();
+        }
+
+        window.selectOption = function(qIndex, score, element) {
+            quizAnswers[qIndex] = score;
+
+            element.parentNode.querySelectorAll('.quiz-option').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            element.classList.add('selected');
+
+            setTimeout(() => {
+                if (qIndex < quizQuestions.length - 1) {
+                    currentQuestionIndex++;
+                    renderQuestion(currentQuestionIndex);
+                } else {
+                    renderResults();
+                }
+            }, 300);
+        };
+
+        function updateNavigation() {
+            prevButton.classList.toggle('hidden', currentQuestionIndex === 0);
+            nextButton.classList.add('hidden');
+        }
+        
+        function renderResults() {
+            let totalScore = Object.values(quizAnswers).reduce((sum, score) => sum + score, 0);
+            const recommendedProduct = getRecommendation(totalScore);
+            
+            const productElement = document.getElementById(`product-${recommendedProduct.replace(/\s/g, '-')}`);
+            if (productElement) {
+                productElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                productElement.classList.add('shadow-2xl', 'ring-4', 'ring-boo-mint', 'ring-offset-2');
+                setTimeout(() => {
+                    productElement.classList.remove('shadow-2xl', 'ring-4', 'ring-boo-mint', 'ring-offset-2');
+                }, 4000);
+            }
+
+            const html = `
+                <div class="p-6 md:p-10 bg-boo-mint/60 rounded-2xl border border-boo-dark/30">
+                    <p class="text-3xl font-extrabold text-boo-dark mb-4">Vibe Match Found! 🌟</p>
+                    <p class="text-xl text-gray-800 mb-6">
+                        Based on your current vibe, your next main character product is:
+                    </p>
+                    <p class="text-4xl font-black text-boo-dark mb-6">${recommendedProduct}</p>
+                    <a href="#product-${recommendedProduct.replace(/\s/g, '-')}" class="inline-block px-8 py-4 bg-boo-dark text-white font-bold text-lg rounded-full shadow-xl hover:bg-boo-pink/80 hover:text-boo-dark transition duration-300 transform hover:scale-105">
+                        Slay With It Now
+                    </a>
+                </div>
+                <button onclick="restartQuiz()" class="mt-6 px-6 py-3 text-boo-dark font-semibold border border-boo-dark/30 rounded-full hover:bg-boo-dark/10 transition duration-200">
+                    Restart Vibe Check
+                </button>
+            `;
+            quizContainer.innerHTML = html;
+            prevButton.classList.add('hidden');
+        }
+
+        window.prevQuestion = function() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion(currentQuestionIndex);
+            }
+        };
+
+        window.restartQuiz = function() {
+            currentQuestionIndex = 0;
+            quizAnswers = {};
+            renderQuestion(currentQuestionIndex);
+        };
+
+        // Initialize quiz on load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestion(currentQuestionIndex);
+            prevButton.addEventListener('click', prevQuestion);
+        });
+
+
+        // --- INTERACTIVE HEADER GHOST LOGIC ---
+        const leftPupil = document.getElementById('left-pupil');
+        const rightPupil = document.getElementById('right-pupil');
+
+        function updateHeaderGhostEyes() {
+            if (!leftPupil || !rightPupil) return;
+
+            // 1. Calculate Scroll Influence (0 when at top, 1 when past hero section)
+            const heroSection = document.getElementById('hero');
+            const heroHeight = heroSection ? heroSection.offsetHeight : 800;
+            const scrollAmount = window.scrollY;
+            
+            // Influence maxes out around half the hero section height
+            let scrollInfluence = Math.min(1, scrollAmount / (heroHeight * 0.5)); 
+            
+            // Max movement in SVG units (vertical offset from base Y=11)
+            const maxYMovement = 1.5; 
+            
+            // Calculate vertical offset (moves eyes down as influence increases)
+            const scrollDownOffset = scrollInfluence * maxYMovement;
+            
+            // Apply the offset (pupils move down)
+            leftPupil.setAttribute('cy', 11 + scrollDownOffset);
+            rightPupil.setAttribute('cy', 11 + scrollDownOffset);
+        }
+
+        // Attach to scroll event
+        window.addEventListener('scroll', updateHeaderGhostEyes);
+        window.addEventListener('DOMContentLoaded', updateHeaderGhostEyes);
+
+
+        // --- SCROLL ANIMATION (Visibility Observer - Existing Code) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const animatedSections = document.querySelectorAll('.animated-section');
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                rootMargin: '0px',
+                threshold: 0.1
+            });
+
+            animatedSections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+
+    </script>
+</body>
+</html>
+
